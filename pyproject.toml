@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "9router-quota-tracker"
+version = "0.1.0"
+description = "Browserless quota tracker for 9Router-style dashboards"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Chairul" }
+]
+keywords = ["telegram", "tracker", "quota", "scraper", "9router", "dashboard"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent"
+]
+
+[project.scripts]
+router-quota-tracker = "hermes_9router_tracker.__main__:main"
+hermes-9router-tracker = "hermes_9router_tracker.__main__:main"
+router-quota-hermes-install = "hermes_9router_tracker.hermes_install:main"
+router-quota-hermes-uninstall = "hermes_9router_tracker.hermes_uninstall:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
