@@ -1,9 +1,11 @@
 import os
+from datetime import timedelta
 import unittest
 
 from hermes_9router_tracker.tracker import (
     TrackerConfig,
     _build_summary,
+    _build_config,
     _label_sort_key,
     _provider_sort_key,
     scrape_quota_json,
@@ -14,6 +16,13 @@ from hermes_9router_tracker.hermes_install import build_exec_command
 class TrackerOrderingTests(unittest.TestCase):
     def tearDown(self):
         for key in (
+            "ROUTER_QUOTA_BASE_URL",
+            "ROUTER_QUOTA_PASSWORD",
+            "ROUTER_QUOTA_TIMEOUT",
+            "ROUTER_QUOTA_PAGE_SIZE",
+            "ROUTER_QUOTA_PROVIDER",
+            "AI_ITOPS_URL",
+            "AI_ITOPS_PASSWORD",
             "TRACKER_PROVIDER_ORDER",
             "TRACKER_PROVIDER_LABEL_ORDER",
             "TRACKER_LABEL_REPLACEMENTS",
@@ -36,6 +45,48 @@ class TrackerOrderingTests(unittest.TestCase):
         labels = ["Model A", "Model B", "Model C"]
         ordered = sorted(labels, key=lambda label: _label_sort_key("custom-provider", label))
         self.assertEqual(ordered, ["Model B", "Model A", "Model C"])
+
+
+class TrackerFormattingTests(unittest.TestCase):
+    def test_format_reset_returns_relative_time(self):
+        import hermes_9router_tracker.tracker as tracker
+        future = (tracker.datetime.now(tracker.timezone.utc).replace(second=0, microsecond=0) + timedelta(hours=2, minutes=30)).isoformat()
+        text = tracker._format_reset(future)
+        self.assertTrue(text.startswith("⏳ "))
+
+    def test_build_config_reads_environment(self):
+        import argparse
+
+        os.environ["ROUTER_QUOTA_BASE_URL"] = "https://example.test"
+        os.environ["ROUTER_QUOTA_PASSWORD"] = "secret"
+        config = _build_config(
+            argparse.Namespace(
+                base_url=None,
+                password=None,
+                provider=None,
+                timeout=None,
+                page_size=None,
+            )
+        )
+        self.assertEqual(config.base_url, "https://example.test")
+        self.assertEqual(config.password, "secret")
+
+    def test_build_config_keeps_legacy_environment_fallback(self):
+        import argparse
+
+        os.environ["AI_ITOPS_URL"] = "https://legacy.example.test"
+        os.environ["AI_ITOPS_PASSWORD"] = "legacy-secret"
+        config = _build_config(
+            argparse.Namespace(
+                base_url=None,
+                password=None,
+                provider=None,
+                timeout=None,
+                page_size=None,
+            )
+        )
+        self.assertEqual(config.base_url, "https://legacy.example.test")
+        self.assertEqual(config.password, "legacy-secret")
 
 
 class TrackerSummaryTests(unittest.TestCase):
@@ -97,3 +148,5 @@ class HermesInstallTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+

@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "Browserless quota tracker for 9Router-style dashboards"
 readme = "README.md"
 requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6.0"
+]
 license = { text = "MIT" }
 authors = [
   { name = "Chairul" }

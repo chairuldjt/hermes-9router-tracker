@@ -3,7 +3,7 @@ import json
 import os
 import sys
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from http.cookiejar import CookieJar
 from typing import Any
 from urllib.error import HTTPError
@@ -43,7 +43,56 @@ class TrackerConfig:
 
 
 def _env(name: str, default: str = "") -> str:
+    _load_dotenv()
     return os.getenv(name, default)
+
+
+def _env_first(names: list[str], default: str = "") -> str:
+    _load_dotenv()
+    for name in names:
+        value = os.getenv(name, "")
+        if value:
+            return value
+    return default
+
+
+def _dotenv_candidates() -> list[str]:
+    root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    candidates = [
+        os.path.join(os.getcwd(), ".env"),
+        os.path.join(os.getcwd(), ".env.local"),
+        os.path.join(root, ".env"),
+        os.path.join(root, ".env.local"),
+    ]
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for path in candidates:
+        normalized = os.path.normcase(os.path.abspath(path))
+        if normalized in seen:
+            continue
+        seen.add(normalized)
+        ordered.append(path)
+    return ordered
+
+
+def _load_dotenv() -> None:
+    if getattr(_load_dotenv, "_loaded", False):
+        return
+    for path in _dotenv_candidates():
+        if not os.path.exists(path):
+            continue
+        with open(path, "r", encoding="utf-8") as handle:
+            for raw_line in handle:
+                line = raw_line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                if not key or key in os.environ:
+                    continue
+                value = value.strip().strip("\"'")
+                os.environ[key] = value
+    _load_dotenv._loaded = True
 
 
 def _load_json_env(name: str, default: Any) -> Any:
@@ -135,7 +184,21 @@ def _format_reset(value: Any) -> str:
         return "-"
     try:
         dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-        return dt.strftime("%d %b %H:%M UTC")
+        now = datetime.now(timezone.utc)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        delta = dt - now
+        seconds = int(delta.total_seconds())
+        if seconds <= 0:
+            return "⏳ now"
+        days, rem = divmod(seconds, 86400)
+        hours, rem = divmod(rem, 3600)
+        minutes = rem // 60
+        if days > 0:
+            return f"⏳ {days}d {hours}h"
+        if hours > 0:
+            return f"⏳ {hours}h {minutes}m"
+        return f"⏳ {minutes}m"
     except Exception:
         return str(value)
 
@@ -320,7 +383,7 @@ def _build_summary(connections: list[dict[str, Any]], usages: dict[str, dict[str
 
 def scrape_quota(config: TrackerConfig, summary_only: bool = False) -> str:
     connections, usages = _fetch_data(config)
-    lines = ["📊 AI Quota Tracker", f"Total account: {len(connections)}", ""]
+    lines = ["📊 AI Quota Tracker", f"Total accounts: {len(connections)}", ""]
     lines.extend(_build_summary(connections, usages))
     if summary_only:
         return "\n".join(lines).rstrip()
@@ -333,7 +396,8 @@ def scrape_quota(config: TrackerConfig, summary_only: bool = False) -> str:
     global_index = 1
     for provider in provider_names:
         provider_connections = grouped[provider]
-        lines.append(f"{_provider_icon(provider)} {provider.upper()} ({len(provider_connections)} account)")
+        account_word = "account" if len(provider_connections) == 1 else "accounts"
+        lines.append(f"{_provider_icon(provider)} {provider.upper()} ({len(provider_connections)} {account_word})")
         lines.append("")
         for connection in provider_connections:
             account = _account_name(connection)
@@ -342,9 +406,10 @@ def scrape_quota(config: TrackerConfig, summary_only: bool = False) -> str:
             card_title = provider.replace("-", " ").title()
             lines.append(f"{global_index}. {account}")
             rows = _normalize_quota_rows(provider, usage)
-            lines.append(f"   {card_title} | plan {plan} | {len(rows)} quota")
+            quota_word = "quota" if len(rows) == 1 else "quotas"
+            lines.append(f"   {card_title} | plan {plan} | {len(rows)} {quota_word}")
             if not rows:
-                lines.append("   • quota tidak tersedia")
+                lines.append("   • quota data unavailable")
                 lines.append("")
                 global_index += 1
                 continue
@@ -356,8 +421,8 @@ def scrape_quota(config: TrackerConfig, summary_only: bool = False) -> str:
                 pct_text = f"{remaining_pct:.0f}%" if remaining_pct is not None else "-"
                 label = _short_label(row["label"])
                 lines.append(f"   {icon} {label}")
-                lines.append(f"   {bar} {row['used']}/{row['total']} used | sisa {row['remaining']} ({pct_text})")
-                lines.append(f"   reset {row['reset']}{row['extra']}")
+                lines.append(f"   {bar} {row['used']}/{row['total']} used | remaining {row['remaining']} ({pct_text})")
+                lines.append(f"   {row['reset']}{row['extra']}")
             lines.append("")
             global_index += 1
     return "\n".join(lines).rstrip()
@@ -377,13 +442,20 @@ def scrape_quota_json(config: TrackerConfig) -> dict[str, Any]:
 
 
 def _build_config(args: argparse.Namespace) -> TrackerConfig:
-    base_url = (args.base_url or _env("AI_ITOPS_URL", "https://your-9router.example.com")).rstrip("/")
-    password = args.password or _env("AI_ITOPS_PASSWORD", "")
+    base_url = (
+        args.base_url
+        or _env_first(["ROUTER_QUOTA_BASE_URL", "AI_ITOPS_URL"], "https://your-9router.example.com")
+    ).rstrip("/")
+    password = args.password or _env_first(["ROUTER_QUOTA_PASSWORD", "AI_ITOPS_PASSWORD"], "")
     if not password:
-        raise RuntimeError("missing password; pass --password or set AI_ITOPS_PASSWORD")
-    timeout = float(args.timeout or _env("AI_ITOPS_TIMEOUT", "20"))
-    page_size = int(args.page_size or _env("AI_ITOPS_PAGE_SIZE", "100"))
-    provider_filter = (args.provider or _env("AI_ITOPS_PROVIDER", "")).strip().lower()
+        raise RuntimeError(
+            "missing password; pass --password or set ROUTER_QUOTA_PASSWORD"
+        )
+    timeout = float(args.timeout or _env_first(["ROUTER_QUOTA_TIMEOUT", "AI_ITOPS_TIMEOUT"], "20"))
+    page_size = int(args.page_size or _env_first(["ROUTER_QUOTA_PAGE_SIZE", "AI_ITOPS_PAGE_SIZE"], "100"))
+    provider_filter = (
+        args.provider or _env_first(["ROUTER_QUOTA_PROVIDER", "AI_ITOPS_PROVIDER"], "")
+    ).strip().lower()
     return TrackerConfig(base_url=base_url, password=password, timeout=timeout, page_size=page_size, provider_filter=provider_filter)
 
 
@@ -416,3 +488,6 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as exc:
         print(f"Quota tracker failed: {exc}")
         return 1
+
+
+

@@ -11,10 +11,12 @@ $ErrorActionPreference = "Stop"
 Write-Host "Installing Hermes /$CommandName quota command..."
 
 $cmd = @(
-  "router-quota-hermes-install",
+  "python",
+  ".\\run_hermes_install.py",
   "--hermes-bin", $HermesBin,
   "--command-name", $CommandName,
-  "--description", $Description
+  "--description", $Description,
+  "--runner", "python `"$PSScriptRoot\\run_tracker.py`""
 )
 
 if ($Provider) {
