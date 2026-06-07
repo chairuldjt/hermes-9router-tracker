@@ -1,0 +1,92 @@
+<svg width="1280" height="640" viewBox="0 0 1280 640" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">9Router Quota Tracker</title>
+  <desc id="desc">Hermes addon for browserless 9Router quota tracking in Telegram.</desc>
+  <defs>
+    <linearGradient id="bg" x1="80" y1="40" x2="1180" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1F1C"/>
+      <stop offset="0.52" stop-color="#123B35"/>
+      <stop offset="1" stop-color="#0A0F1F"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="232" y1="128" x2="965" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3EE6B6"/>
+      <stop offset="1" stop-color="#55B4FF"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#37E09A"/>
+      <stop offset="1" stop-color="#7BF2C3"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="640" rx="28" fill="url(#bg)"/>
+  <circle cx="1084" cy="130" r="158" fill="#193B57" fill-opacity="0.35"/>
+  <circle cx="1000" cy="84" r="68" fill="#4CE6C1" fill-opacity="0.14"/>
+  <circle cx="149" cy="555" r="208" fill="#1C725F" fill-opacity="0.16"/>
+  <path d="M0 500C208 427 368 420 540 458C761 507 904 598 1280 508V640H0V500Z" fill="#08141A" fill-opacity="0.62"/>
+
+  <g opacity="0.22">
+    <path d="M812 148H1114" stroke="#7FF5C8" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 11"/>
+    <path d="M760 214H1136" stroke="#7FF5C8" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 11"/>
+    <path d="M786 280H1096" stroke="#7FF5C8" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 11"/>
+  </g>
+
+  <rect x="74" y="86" width="612" height="428" rx="30" fill="#0D171F" fill-opacity="0.82" stroke="#2A4C57" stroke-width="1.5"/>
+  <rect x="98" y="114" width="566" height="64" rx="20" fill="#101F29"/>
+  <circle cx="132" cy="146" r="9" fill="#41E4AE"/>
+  <text x="156" y="153" fill="#E7FAF5" font-size="28" font-family="Segoe UI, Arial, sans-serif" font-weight="700">/quota</text>
+  <text x="638" y="153" text-anchor="end" fill="#8DB7C4" font-size="18" font-family="Segoe UI, Arial, sans-serif">Hermes Telegram command</text>
+
+  <text x="100" y="228" fill="#D9FFF3" font-size="54" font-family="Segoe UI, Arial, sans-serif" font-weight="800">9Router Quota Tracker</text>
+  <text x="100" y="274" fill="#9FD3D8" font-size="22" font-family="Segoe UI, Arial, sans-serif">Browserless quota tracking addon for Hermes</text>
+
+  <g filter="url(#glow)">
+    <path d="M100 316H460" stroke="url(#accent)" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(102 340)">
+    <circle cx="10" cy="12" r="10" fill="#37E09A"/>
+    <text x="34" y="18" fill="#F5FFFC" font-size="22" font-family="Segoe UI, Arial, sans-serif">Summary + detail output</text>
+  </g>
+  <g transform="translate(102 384)">
+    <circle cx="10" cy="12" r="10" fill="#56C8FF"/>
+    <text x="34" y="18" fill="#F5FFFC" font-size="22" font-family="Segoe UI, Arial, sans-serif">Installable as Hermes /quota</text>
+  </g>
+  <g transform="translate(102 428)">
+    <circle cx="10" cy="12" r="10" fill="#7FF0C7"/>
+    <text x="34" y="18" fill="#F5FFFC" font-size="22" font-family="Segoe UI, Arial, sans-serif">Windows and Linux friendly</text>
+  </g>
+
+  <g transform="translate(780 118)">
+    <rect width="418" height="328" rx="26" fill="#0E1C24" stroke="#244652" stroke-width="1.5"/>
+    <text x="28" y="44" fill="#E7FBF4" font-size="28" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Quota snapshot</text>
+    <text x="28" y="75" fill="#8DB7C4" font-size="16" font-family="Segoe UI, Arial, sans-serif">Telegram-friendly layout</text>
+
+    <g transform="translate(28 110)">
+      <text x="0" y="16" fill="#E7FBF4" font-size="18" font-family="Consolas, Menlo, monospace">🧠 CODEX</text>
+      <text x="0" y="50" fill="#D1F7EA" font-size="16" font-family="Consolas, Menlo, monospace">weekly</text>
+      <rect x="118" y="35" width="216" height="14" rx="7" fill="#18313A"/>
+      <rect x="118" y="35" width="52" height="14" rx="7" fill="url(#bar)"/>
+      <text x="344" y="47" fill="#7FF4C6" font-size="15" font-family="Consolas, Menlo, monospace">22%</text>
+      <text x="0" y="78" fill="#8DB7C4" font-size="15" font-family="Consolas, Menlo, monospace">remaining 22 / 100</text>
+      <text x="0" y="106" fill="#8DB7C4" font-size="15" font-family="Consolas, Menlo, monospace">⏳ 2d 5h</text>
+    </g>
+
+    <g transform="translate(28 215)">
+      <text x="0" y="16" fill="#E7FBF4" font-size="18" font-family="Consolas, Menlo, monospace">🪵 KIRO</text>
+      <text x="0" y="50" fill="#D1F7EA" font-size="16" font-family="Consolas, Menlo, monospace">credit</text>
+      <rect x="118" y="35" width="216" height="14" rx="7" fill="#18313A"/>
+      <rect x="118" y="35" width="18" height="14" rx="7" fill="#FF7C6E"/>
+      <text x="344" y="47" fill="#FFB4A5" font-size="15" font-family="Consolas, Menlo, monospace">7%</text>
+      <text x="0" y="78" fill="#8DB7C4" font-size="15" font-family="Consolas, Menlo, monospace">remaining 3.67 / 50</text>
+      <text x="0" y="106" fill="#8DB7C4" font-size="15" font-family="Consolas, Menlo, monospace">⏳ 23d 16h</text>
+    </g>
+  </g>
+
+  <text x="82" y="584" fill="#9FC6D0" font-size="18" font-family="Segoe UI, Arial, sans-serif">Open-source Hermes addon for 9Router quota tracking</text>
+</svg>

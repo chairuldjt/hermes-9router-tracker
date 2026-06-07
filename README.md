@@ -1,5 +1,7 @@
 # 9Router Quota Tracker
 
+[![Banner](assets/repo-banner.svg)](https://github.com/chairuldjt/hermes-9router-tracker)
+
 [![CI](https://github.com/chairuldjt/hermes-9router-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/chairuldjt/hermes-9router-tracker/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -344,6 +346,10 @@ The included CI workflow:
 - tests Python 3.10, 3.11, and 3.12
 - runs unit tests
 - validates package import
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and the next unreleased section.
 
 ## Security Notes
 
