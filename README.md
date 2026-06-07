@@ -1,5 +1,9 @@
 # 9Router Quota Tracker
 
+[![CI](https://github.com/chairuldjt/hermes-9router-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/chairuldjt/hermes-9router-tracker/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 Hermes addon CLI that installs a `/quota` command so a Telegram-connected Hermes agent can read 9Router quota data directly from the dashboard API, without opening a browser.
 
 This repository can also be used as a standalone CLI, but its primary goal is to make `/quota` easy to install into Hermes.
@@ -93,7 +97,8 @@ python run_hermes_install.py --hermes-bin hermes --command-name quota --descript
 Windows example:
 
 ```powershell
-python run_hermes_install.py --hermes-bin hermes --command-name quota --description "Check AI Quota" --runner "python `"$PWD\run_tracker.py`""
+$repoPath = (Get-Location).Path
+python run_hermes_install.py --hermes-bin hermes --command-name quota --description "Check AI Quota" --runner "python `"$repoPath\run_tracker.py`""
 ```
 
 Linux example:
@@ -292,7 +297,7 @@ Recommendations:
 
 ```text
 📊 AI Quota Tracker
-Total account: 12
+Total accounts: 12
 
 Summary
 - account: 12
@@ -303,10 +308,10 @@ Summary
 
 Detail
 
-🧠 CODEX (2 account)
+🧠 CODEX (2 accounts)
 
 1. account-a@example.com
-   Codex | plan plus | 2 quota
+   Codex | plan plus | 2 quotas
    🟠 weekly
    [██░░░░░░] 78/100 used | remaining 22 (22%)
    ⏳ 2d 5h
